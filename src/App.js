@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React from "react";
+import ReactDOM from "react-dom";
+import NotOnRoom from "./components/notOnRoom/notOnRoom";
+import OnRoom from "./components/onRoom/onRoom";
+const { io } = require("socket.io-client");
+const socket = io("http://10.35.12.24:3001", { transports: ["websocket"] });
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+let isOnGaming = false;
+let code = "";
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    socket.on("start", (msg) => {
+      isOnGaming = msg.isInGame;
+      code = msg.code;
+      this.setState({ isIngame: msg.isInGame });
+    });
+  }
+
+  state = {
+    isInGame: false,
+    nickname: "",
+    code: "",
+  };
+
+  render() {
+    return (
+      <div className="main">
+        {isOnGaming ? (
+          <OnRoom code={code} socket={socket} />
+        ) : (
+          <NotOnRoom socket={socket} nickname={this.state.nickname} />
+        )}
+      </div>
+    );
+  }
 }
 
-export default App;
+ReactDOM.render(<App />, document.getElementById("root"));
