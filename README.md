@@ -1,4 +1,4 @@
-# Morpion's Projects (Server)
+# Morpion's Projects
 
 ## How to install website
 
@@ -18,6 +18,13 @@ $ npm start
 This project was done in only 3 hours. The code is not perfect but it works!
 Updates will be done for the code ergonomics
 You can test project here **[https://morpion.blizzfull.fr](https://morpion.blizzfull.fr)**
+
+ - [ ] Style in game
+ - [ ] Clean code
+ - [ ] Add account creation
+ - [ ] Add nickname
+ - [ ] Add cosmetics
+
 
 ## Problem
 
