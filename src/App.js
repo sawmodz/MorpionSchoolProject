@@ -11,6 +11,7 @@ const socket = io("url", {
 });
 
 let isOnGaming = false;
+let historique = [];
 let code = "";
 let yourSigne = "Aucune";
 
@@ -34,30 +35,55 @@ export default class App extends React.Component {
 
     socket.on("win", (msg) => {
       isOnGaming = msg.isInGame;
+      historique = msg.history;
       code = "";
-      this.setState({ isIngame: msg.isInGame });
+      this.setState({ isIngame: msg.isInGame, history: msg.history });
       sa.fire("Bien joué !", "Vous avez gagné", "success");
     });
 
     socket.on("loose", (msg) => {
       isOnGaming = msg.isInGame;
+      historique = msg.history;
       code = "";
-      this.setState({ isIngame: msg.isInGame });
+      this.setState({ isIngame: msg.isInGame, history: msg.history });
       sa.fire("Dommage !", "Vous avez perdu", "error");
     });
 
     socket.on("egalite", (msg) => {
       isOnGaming = msg.isInGame;
+      historique = msg.history;
       code = "";
-      this.setState({ isIngame: msg.isInGame });
+      this.setState({ isIngame: msg.isInGame, history: msg.history });
       sa.fire("Dommage !", "Vous avez fait un égalité", "warning");
     });
 
     socket.on("error", (msg) => {
       isOnGaming = msg.isInGame;
+      historique = msg.history;
       code = "";
       this.setState({ isIngame: msg.isInGame });
       sa.fire("Un problème est survenue !", msg.msg, "error");
+    });
+
+    socket.on("replay", (msg) => {
+      if (msg.error) {
+        sa.fire("Un problème est survenue !", msg.message, "error");
+      } else {
+        if (msg.demande) {
+          sa.fire({
+            title: msg.id + " demande pour prendre une revanche",
+            icon: "info",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Accepter",
+            denyButtonText: `Refuser`,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              socket.emit("replay", { replay: true, id: msg.id, code: code });
+            }
+          });
+        }
+      }
     });
   }
 
@@ -65,6 +91,7 @@ export default class App extends React.Component {
     isInGame: false,
     nickname: "",
     code: "",
+    lastplay: [],
   };
 
   render() {
@@ -73,14 +100,14 @@ export default class App extends React.Component {
         <a href="https://github.com/sawmodz/MorpionSchoolProject">
           <img src={gitCorner} alt="gitCorner" className="gitCorner" />
         </a>
-        <div class="alert alert-danger" role="alert">
-          Ce site est actuellement en cour de construction ! Le style n'est pas
-          terminé ! En cas de bug contacter Blizz#6699 sur Discord
-        </div>
         {isOnGaming ? (
           <OnRoom code={code} socket={socket} signe={yourSigne} />
         ) : (
-          <NotOnRoom socket={socket} nickname={this.state.nickname} />
+          <NotOnRoom
+            lastplay={historique}
+            socket={socket}
+            nickname={this.state.nickname}
+          />
         )}
       </div>
     );

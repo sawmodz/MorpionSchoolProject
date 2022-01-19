@@ -2,6 +2,33 @@
   background-color: #004daa;
 }
 
+html {
+  height: -webkit-fill-available;
+}
+
 .main {
+  padding: 0;
+  margin: 0;
   height: 100vh;
+}
+
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* The hack for Safari */
+    min-height: -webkit-fill-available;
+  }
+}
+
+.myBox {
+  margin-left: 50px !important;
+  margin-right: 50px !important;
+}
+
+.lastGame {
+  overflow-y: scroll;
+  height: 250px;
+}
+
+.codeCopy {
+  cursor: pointer;
 }
