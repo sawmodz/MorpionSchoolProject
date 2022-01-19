@@ -34,6 +34,13 @@ export default class App extends React.Component {
       <div id="Jeu">
         <h2>Morpion</h2>
 
+        <h3>Tu est {this.props.signe}</h3>
+        <h3>
+          {this.state.signe !== this.props.signe
+            ? "A ton tour de jouer"
+            : "Au tour de l'adversaire"}
+        </h3>
+
         <div>
           <button onClick={() => clickOnCase(0, 0)}>
             {this.state.morpion[0][0]}
